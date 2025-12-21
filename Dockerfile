@@ -13,6 +13,7 @@ RUN npm install
 COPY . .
 
 # Build the application
+ENV VITE_API_URL=https://northling-backend.onrender.com/api
 RUN npm run build
 
 # Production stage
