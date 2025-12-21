@@ -65,7 +65,7 @@ copy .env.example .env
 npm run dev
 ```
 
-The backend will run on `http://localhost:5000`
+The backend will run on `http://localhost:2000`
 
 ### 3. Setup Frontend
 
@@ -83,22 +83,22 @@ copy .env.example .env
 npm run dev
 ```
 
-The frontend will run on `http://localhost:5173`
+The frontend will run on `http://localhost:1000`
 
 ## Environment Variables
 
 ### Backend (.env)
 ```
-PORT=5000
+PORT=2000
 MONGODB_URI=mongodb://localhost:27017/northling
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 NODE_ENV=development
-CORS_ORIGIN=http://localhost:5173
+CORS_ORIGIN=http://localhost:1000
 ```
 
 ### Frontend (.env)
 ```
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:2000/api
 ```
 
 ## API Endpoints
@@ -205,10 +205,10 @@ npm run build  # Build for production
 ### Backend won't start
 - Check if MongoDB is running
 - Verify `MONGODB_URI` in `.env`
-- Check if port 5000 is available
+- Check if port 2000 is available
 
 ### Frontend can't connect to backend
-- Verify backend is running on port 5000
+- Verify backend is running on port 2000
 - Check `VITE_API_URL` in frontend `.env`
 - Check CORS settings in backend
 

@@ -25,7 +25,7 @@ const VocabularyQuiz = ({ languages }: QuizSectionProps) => {
         { word: 'Hello', translation: 'Sannu', options: ['Sannu', 'Barka', 'Ina', 'Lafiya'] },
         { word: 'Water', translation: 'Ruwa', options: ['Ruwa', 'Gida', 'Abinci', 'Daki'] },
         { word: 'Food', translation: 'Abinci', options: ['Abinci', 'Ruwa', 'Gida', 'Lafiya'] },
-          { word: 'Thank you', translation: 'Nagode', options: ['Nagode', 'Sannu', 'Barka', 'Ruwa'] },
+        { word: 'Thank you', translation: 'Nagode', options: ['Nagode', 'Sannu', 'Barka', 'Ruwa'] },
         { word: 'Goodbye', translation: 'Sai anjima', options: ['Sai anjima', 'Nagode', 'Sannu', 'Barka'] },
         { word: 'Please', translation: 'Don Allah', options: ['Don Allah', 'Nagode', 'Barka', 'Daki'] },
         { word: 'Good morning', translation: 'Ina kwana', options: ['Ina kwana', 'Barka da yamma', 'Nagode', 'Lafiya'] },
@@ -58,7 +58,7 @@ const VocabularyQuiz = ({ languages }: QuizSectionProps) => {
         { word: 'Forest', translation: 'Daji', options: ['Daji', 'Gona', 'Kogi', 'Dutse'] },
         { word: 'Road', translation: 'Hanya', options: ['Hanya', 'Daji', 'Gona', 'Kogi'] },
         { word: 'City', translation: 'Birni', options: ['Birni', 'Hanya', 'Daji', 'Gona'] },
-         { word: 'Mountain', translation: 'Dutse', options: ['Dutse', 'Kogi', 'Gona', 'Daji'] },
+        { word: 'Mountain', translation: 'Dutse', options: ['Dutse', 'Kogi', 'Gona', 'Daji'] },
         { word: 'River', translation: 'Kogi', options: ['Kogi', 'Dutse', 'Gona', 'Daji'] },
         { word: 'Farm', translation: 'Gona', options: ['Gona', 'Kogi', 'Dutse', 'Daji'] }
       ]
@@ -86,7 +86,7 @@ const VocabularyQuiz = ({ languages }: QuizSectionProps) => {
         { word: 'Chair', translation: 'Kujera', options: ['Kujera', 'Tebur', 'Gida', 'Daki'] },
         { word: 'Table', translation: 'Tebur', options: ['Tebur', 'Kujera', 'Gida', 'Daki'] },
         { word: 'Window', translation: 'Tagar', options: ['Tagar', 'Kujera', 'Tebur', 'Daki'] },
-         { word: 'Market', translation: 'Kasuwanci', options: ['Kasuwanci', 'Kasuwa', 'Gida', 'Daki'] },
+        { word: 'Market', translation: 'Kasuwanci', options: ['Kasuwanci', 'Kasuwa', 'Gida', 'Daki'] },
         { word: 'Shop', translation: 'Shago', options: ['Shago', 'Kasuwanci', 'Gida', 'Daki'] },
         { word: 'Money', translation: 'Kudi', options: ['Kudi', 'Shago', 'Kasuwanci', 'Gida'] }
       ]
@@ -97,7 +97,7 @@ const VocabularyQuiz = ({ languages }: QuizSectionProps) => {
         { word: 'Car', translation: 'Mota', options: ['Mota', 'Keke', 'Gida', 'Daki'] },
         { word: 'Bicycle', translation: 'Keke', options: ['Keke', 'Mota', 'Abinci', 'Nagode'] },
         { word: 'Market', translation: 'Kasuwa', options: ['Kasuwa', 'Gida', 'Daki', 'Lafiya'] },
-         { word: 'Boy', translation: 'Yaro', options: ['Yaro', 'Yarinya', 'Aboki', 'Abokiya'] },
+        { word: 'Boy', translation: 'Yaro', options: ['Yaro', 'Yarinya', 'Aboki', 'Abokiya'] },
         { word: 'Teacher', translation: 'Malam', options: ['Malam', 'Dalibi', 'Aboki', 'Yaro'] },
         { word: 'Student', translation: 'Dalibi', options: ['Dalibi', 'Malam', 'Aboki', 'Yaro'] },
         { word: 'Ten', translation: 'Goma', options: ['Goma', 'Tara', 'Takwas', 'Bakwai'] },
@@ -111,10 +111,10 @@ const VocabularyQuiz = ({ languages }: QuizSectionProps) => {
         { word: 'Rice', translation: 'Shinkafa', options: ['Shinkafa', 'Abinci', 'Ruwa', 'Gida'] },
         { word: 'Meat', translation: 'Nama', options: ['Nama', 'Shinkafa', 'Abinci', 'Nagode'] },
         { word: 'Soup', translation: 'Miyan', options: ['Miyan', 'Nama', 'Shinkafa', 'Lafiya'] },
-          { word: 'Seven', translation: 'Bakwai', options: ['Bakwai', 'Takwas', 'Tara', 'Goma'] },
+        { word: 'Seven', translation: 'Bakwai', options: ['Bakwai', 'Takwas', 'Tara', 'Goma'] },
         { word: 'Eight', translation: 'Takwas', options: ['Takwas', 'Bakwai', 'Tara', 'Goma'] },
         { word: 'Nine', translation: 'Tara', options: ['Tara', 'Bakwai', 'Takwas', 'Goma'] },
-         { word: 'Four', translation: 'Hudu', options: ['Hudu', 'Biyar', 'Shida', 'Bakwai'] },
+        { word: 'Four', translation: 'Hudu', options: ['Hudu', 'Biyar', 'Shida', 'Bakwai'] },
         { word: 'Five', translation: 'Biyar', options: ['Biyar', 'Hudu', 'Shida', 'Bakwai'] },
         { word: 'Six', translation: 'Shida', options: ['Shida', 'Biyar', 'Hudu', 'Bakwai'] }
       ]
@@ -125,20 +125,20 @@ const VocabularyQuiz = ({ languages }: QuizSectionProps) => {
         { word: 'Dog', translation: 'Kare', options: ['Kare', 'Mage', 'Akuya', 'Shanu'] },
         { word: 'Cat', translation: 'Mage', options: ['Mage', 'Kare', 'Akuya', 'Shanu'] },
         { word: 'Goat', translation: 'Akuya', options: ['Akuya', 'Kare', 'Mage', 'Shanu'] },
-          { word: 'One', translation: 'Daya', options: ['Daya', 'Biyu', 'Uku', 'Hudu'] },
+        { word: 'One', translation: 'Daya', options: ['Daya', 'Biyu', 'Uku', 'Hudu'] },
         { word: 'Two', translation: 'Biyu', options: ['Biyu', 'Daya', 'Uku', 'Hudu'] },
         { word: 'Three', translation: 'Uku', options: ['Uku', 'Daya', 'Biyu', 'Hudu'] },
-            { word: 'Sun', translation: 'Rana', options: ['Rana', 'Ruwa', 'Dare', 'Gida'] },
+        { word: 'Sun', translation: 'Rana', options: ['Rana', 'Ruwa', 'Dare', 'Gida'] },
         { word: 'Rain', translation: 'Ruwa', options: ['Ruwa', 'Rana', 'Dare', 'Gida'] },
         { word: 'Night', translation: 'Dare', options: ['Dare', 'Rana', 'Ruwa', 'Gida'] }
       ]
     }
- 
+
   ]);
   const [currentStage, setCurrentStage] = useState(stages[0]);
   const [stageProgress, setStageProgress] = useState<Record<number, { score: number; total: number }>>({});
   const [animation, setAnimation] = useState<'correct' | 'wrong' | null>(null);
-  
+
   const { toast } = useToast();
 
   // Function to shuffle array
@@ -163,12 +163,12 @@ const VocabularyQuiz = ({ languages }: QuizSectionProps) => {
 
   const handleAnswer = async (answer: string) => {
     if (showResult || !currentStage?.words) return;
-    
+
     setSelectedAnswer(answer);
     const isCorrect = answer === currentStage.words[currentQuiz]?.translation;
-    
+
     setAnimation(isCorrect ? 'correct' : 'wrong');
-    
+
     if (isCorrect) {
       setScore(s => s + 10);
       setStreakCount(s => s + 1);
@@ -186,7 +186,7 @@ const VocabularyQuiz = ({ languages }: QuizSectionProps) => {
         toast({
           title: "Stage Complete! 🎉",
           description: `Congratulations! You've completed Stage ${currentStage.id} with a score of ${score + (isCorrect ? 10 : 0)}!`,
-          duration: 5000
+          duration: 2000
         });
         setShowResult(true);
       }
@@ -224,13 +224,13 @@ const VocabularyQuiz = ({ languages }: QuizSectionProps) => {
           </div>
         </div>
         <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
             style={{ width: `${(currentQuiz / (currentStage?.words?.length || 1)) * 100}%` }}
           />
         </div>
       </CardHeader>
-      
+
       <CardContent className="p-6 space-y-6">
         {showResult ? (
           <div className="text-center space-y-4">
@@ -322,7 +322,7 @@ const VocabularyQuiz = ({ languages }: QuizSectionProps) => {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 {currentOptions.map((option, index) => (
                   <Button

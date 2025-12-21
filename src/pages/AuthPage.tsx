@@ -23,7 +23,7 @@ const AuthPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const { userRole } = useAuth();
+  const { userRole, refreshUser } = useAuth();
 
   const from = location.state?.from?.pathname || '/';
 
@@ -93,6 +93,9 @@ const AuthPage = () => {
         await apiClient.updateProfile(formData.name);
       }
 
+      // Refresh the auth context to load the new user
+      await refreshUser();
+
       toast({
         title: "Account created!",
         description: "Welcome to NorthLing",
@@ -101,7 +104,7 @@ const AuthPage = () => {
       // Redirect to dashboard
       setTimeout(() => {
         navigate('/dashboard');
-      }, 1000);
+      }, 500);
     } catch (error: any) {
       toast({
         title: "Signup Error",
