@@ -13,7 +13,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 2000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://https://northling.onrender.com/';
+const CORS_ORIGIN = process.env.CORS_ORIGIN || 'https://northling.onrender.com';
 
 // Middleware
 app.use(helmet());
@@ -23,7 +23,6 @@ app.use(cors({
         'http://127.0.0.1:1000',
         'http://localhost:5173',
         'http://localhost:1000',
-        'http://https://northling.onrender.com/',
         'https://northling.onrender.com'
     ],
     credentials: true,
