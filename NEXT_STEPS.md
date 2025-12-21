@@ -46,7 +46,7 @@ MONGODB_URI=mongodb://localhost:27017/northling
 
 JWT_SECRET=my-super-secret-jwt-key-12345
 NODE_ENV=development
-CORS_ORIGIN=http://localhost:1000
+CORS_ORIGIN=http://https://northling.onrender.com/
 ```
 
 **Important:** Replace `JWT_SECRET` with a random string!
@@ -55,7 +55,7 @@ CORS_ORIGIN=http://localhost:1000
 Create this file in the root directory:
 
 ```env
-VITE_API_URL=http://localhost:2000/api
+VITE_API_URL=http://https://northling-backend.onrender.com//api
 ```
 
 ### Step 4: Start the Application
@@ -71,7 +71,7 @@ npm run dev
 **Expected output:**
 ```
 ✅ MongoDB connected successfully
-🚀 Server running on http://localhost:2000
+🚀 Server running on http://https://northling-backend.onrender.com/
 📝 Environment: development
 ```
 
@@ -83,12 +83,12 @@ npm run dev
 **Expected output:**
 ```
 VITE v5.x.x ready in xxx ms
-➜  Local:   http://localhost:1000/
+➜  Local:   http://https://northling.onrender.com//
 ```
 
 ### Step 5: Test the Application
 
-1. Open your browser to http://localhost:1000
+1. Open your browser to http://https://northling.onrender.com/
 2. Click on "Auth" or navigate to `/auth`
 3. Create a new account
 4. Login with your credentials
@@ -132,7 +132,7 @@ npm run build
 - Update `VITE_API_URL=http://localhost:5001/api` in `.env`
 
 ### "CORS error in browser"
-- Verify `CORS_ORIGIN=http://localhost:1000` in `backend/.env`
+- Verify `CORS_ORIGIN=http://https://northling.onrender.com/` in `backend/.env`
 - Restart backend server
 - Clear browser cache
 

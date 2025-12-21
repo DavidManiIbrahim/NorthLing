@@ -65,7 +65,7 @@ copy .env.example .env
 npm run dev
 ```
 
-The backend will run on `http://localhost:2000`
+The backend will run on `http://https://northling-backend.onrender.com/`
 
 ### 3. Setup Frontend
 
@@ -83,7 +83,7 @@ copy .env.example .env
 npm run dev
 ```
 
-The frontend will run on `http://localhost:1000`
+The frontend will run on `http://https://northling.onrender.com/`
 
 ## Environment Variables
 
@@ -93,12 +93,12 @@ PORT=2000
 MONGODB_URI=mongodb://localhost:27017/northling
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 NODE_ENV=development
-CORS_ORIGIN=http://localhost:1000
+CORS_ORIGIN=http://https://northling.onrender.com/
 ```
 
 ### Frontend (.env)
 ```
-VITE_API_URL=http://localhost:2000/api
+VITE_API_URL=http://https://northling-backend.onrender.com//api
 ```
 
 ## API Endpoints

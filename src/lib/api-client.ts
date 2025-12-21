@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:2000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://https://northling-backend.onrender.com//api';
 
 class ApiClient {
     private token: string | null = null;

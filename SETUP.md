@@ -74,12 +74,12 @@ PORT=2000
 MONGODB_URI=mongodb://localhost:27017/northling
 JWT_SECRET=your-super-secret-jwt-key
 NODE_ENV=development
-CORS_ORIGIN=http://localhost:1000
+CORS_ORIGIN=http://https://northling.onrender.com/
 ```
 
 **Frontend** - Create `.env`:
 ```env
-VITE_API_URL=http://localhost:2000/api
+VITE_API_URL=http://https://northling-backend.onrender.com//api
 ```
 
 ### 4. Start Servers
@@ -96,7 +96,7 @@ npm run dev
 ```
 
 ### 5. Test
-Open http://localhost:1000 and create an account!
+Open http://https://northling.onrender.com/ and create an account!
 
 ---
 
