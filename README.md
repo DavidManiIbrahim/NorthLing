@@ -1,166 +1,218 @@
-# NorthLing - Interactive Language Learning Platform
+# NorthLing - Migration to Node.js + MongoDB
 
-## Overview
-
-NorthLing is a modern, interactive language learning platform built with React, TypeScript, and Supabase. It provides an engaging environment for users to learn new languages through vocabulary quizzes, progress tracking, and community features.
-
-## Features
-
-### 🔐 Authentication & User Management
-- Secure email/password authentication
-- Role-based access control (User/Admin)
-- User profile management
-- Customizable avatar support
-
-### 🌍 Language Management
-- Multiple language support
-- Base language selection
-- Target language selection
-- Language preference persistence
-
-### 📚 Learning Features
-- Interactive vocabulary quizzes
-- Progress tracking
-- Streak counting system
-- Audio pronunciation support
-- Achievement system
-
-### 📊 Dashboard & Progress
-- Personal progress dashboard
-- Learning statistics
-- Achievement badges
-- Streak tracking
-- Language proficiency levels
-
-### 🏆 Leaderboard & Community
-- Global leaderboard
-- Weekly/Monthly rankings
-- Community interaction
-- Progress comparison
-- Achievements showcase
-
-### 👨‍💼 Admin Features
-- User management
-- Content management
-- Progress monitoring
-- Analytics dashboard
-
-## Technology Stack
-
-There are several ways of editing your application.
-
-### Frontend
-- React 18+ with TypeScript
-- Vite for fast development and building
-- TailwindCSS for styling
-- Shadcn/ui for UI components
-- React Router for navigation
-- React Query for data fetching
-- Framer Motion for animations
-
-### Backend
-- Supabase for backend services
-- PostgreSQL database
-- Real-time subscriptions
-- Row Level Security
-- Storage for user avatars
-
-### Authentication & Security
-- JWT-based authentication
-- Role-based access control
-- Secure password handling
-- Protected routes
-- Input validation
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-## Getting Started
-
-### Prerequisites
-- Node.js 16+ (18+ recommended)
-- npm or yarn or bun package manager
-- Supabase account for backend services
-
-### Environment Setup
-1. Clone the repository:
-```bash
-git clone https://github.com/DavidManiIbrahim/northling-path.git
-cd northling-path
-```
-
-2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
-# or
-bun install
-```
-
-3. Create a `.env` file in the root directory:
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-4. Start the development server:
-```bash
-npm run dev
-# or
-yarn dev
-# or
-bun dev
-```
-
-### Database Setup
-1. Create a new Supabase project
-2. Run the migration scripts in the `supabase/migrations` folder
-3. Set up the necessary bucket for avatar storage
+This project has been migrated from Supabase to a custom Node.js + MongoDB backend.
 
 ## Project Structure
+
 ```
-northling-path/
-├── src/
-│   ├── components/      # Reusable UI components
-│   ├── hooks/          # Custom React hooks
-│   ├── pages/          # Page components
-│   ├── lib/            # Utility functions
-│   ├── integrations/   # External service integrations
-│   └── styles/         # Global styles and themes
-├── public/             # Static assets
-└── supabase/          # Database migrations and types
+NorthLing/
+├── backend/              # Node.js + Express + MongoDB backend
+│   ├── src/
+│   │   ├── config/      # Database configuration
+│   │   ├── models/      # Mongoose models
+│   │   ├── routes/      # API routes
+│   │   ├── middleware/  # Auth middleware
+│   │   └── server.ts    # Main server file
+│   ├── package.json
+│   └── tsconfig.json
+├── src/                  # React frontend
+│   ├── lib/
+│   │   └── api-client.ts # API client (replaces Supabase)
+│   ├── pages/
+│   ├── components/
+│   └── ...
+└── package.json
 ```
 
-## Contributing
-1. Fork the repository
-2. Create a new branch for your feature
-3. Make your changes
-4. Submit a pull request
+## Setup Instructions
 
-## License
-This project is licensed under the MIT License - see the LICENSE file for details
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 1. Install MongoDB
 
-## What technologies are used for this project?
+**Option A: Local MongoDB**
+- Download and install MongoDB Community Server from https://www.mongodb.com/try/download/community
+- Start MongoDB service:
+  ```bash
+  # Windows
+  net start MongoDB
+  
+  # macOS/Linux
+  sudo systemctl start mongod
+  ```
 
-This project is built with:
+**Option B: MongoDB Atlas (Cloud)**
+- Create a free account at https://www.mongodb.com/cloud/atlas
+- Create a cluster and get your connection string
+- Update `MONGODB_URI` in `backend/.env`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### 2. Setup Backend
 
-## How can I deploy this project?
+```bash
+# Navigate to backend directory
+cd backend
 
-Simply open [Lovable](https://lovable.dev/projects/ff20290a-62b4-4c3f-831d-c6d0fbd2bace) and click on Share -> Publish.
+# Install dependencies
+npm install
 
-## Can I connect a custom domain to my Lovable project?
+# Create .env file
+copy .env.example .env
 
-Yes, you can!
+# Update .env with your MongoDB connection string
+# MONGODB_URI=mongodb://localhost:27017/northling
+# or
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/northling
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Start development server
+npm run dev
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+The backend will run on `http://localhost:5000`
+
+### 3. Setup Frontend
+
+```bash
+# Navigate to root directory
+cd ..
+
+# Install dependencies (removes Supabase packages)
+npm install
+
+# Create .env file
+copy .env.example .env
+
+# Start development server
+npm run dev
+```
+
+The frontend will run on `http://localhost:5173`
+
+## Environment Variables
+
+### Backend (.env)
+```
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/northling
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:5173
+```
+
+### Frontend (.env)
+```
+VITE_API_URL=http://localhost:5000/api
+```
+
+## API Endpoints
+
+All endpoints are prefixed with `/api`
+
+### Authentication
+- `POST /api/auth/signup` - Register new user
+- `POST /api/auth/signin` - Login user
+- `GET /api/auth/me` - Get current user (requires auth)
+- `PATCH /api/auth/profile` - Update user profile (requires auth)
+- `POST /api/auth/signout` - Logout user
+
+### User Preferences
+- `GET /api/preferences` - Get user preferences (requires auth)
+- `PATCH /api/preferences` - Update preferences (requires auth)
+
+### User Progress
+- `GET /api/progress` - Get user progress (requires auth)
+- `PATCH /api/progress` - Update progress (requires auth)
+- `GET /api/progress/leaderboard` - Get leaderboard
+
+### Activities
+- `GET /api/activities` - Get user activities (requires auth)
+- `POST /api/activities` - Create activity (requires auth)
+- `GET /api/activities/all` - Get all activities (admin)
+
+## Migration Changes
+
+### Removed
+- ✅ Supabase client and all related files
+- ✅ `@supabase/supabase-js` package
+- ✅ `/supabase` directory
+- ✅ `/src/integrations/supabase` directory
+
+### Added
+- ✅ Node.js + Express backend
+- ✅ MongoDB with Mongoose ODM
+- ✅ JWT authentication
+- ✅ API client for frontend
+- ✅ User, UserPreferences, UserProgress, Activity models
+
+### Updated
+- ✅ AuthPage to use new API client
+- ✅ All authentication flows
+- ✅ Package.json (removed Supabase)
+
+## Development
+
+### Backend Development
+```bash
+cd backend
+npm run dev    # Start with hot reload
+npm run build  # Build for production
+npm start      # Start production server
+```
+
+### Frontend Development
+```bash
+npm run dev    # Start Vite dev server
+npm run build  # Build for production
+```
+
+## Production Deployment
+
+### Backend
+1. Set environment variables on your hosting platform
+2. Ensure MongoDB is accessible (use MongoDB Atlas for cloud)
+3. Build and deploy:
+   ```bash
+   cd backend
+   npm run build
+   npm start
+   ```
+
+### Frontend
+1. Update `VITE_API_URL` to your production backend URL
+2. Build and deploy:
+   ```bash
+   npm run build
+   ```
+
+## Tech Stack
+
+### Backend
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Database:** MongoDB
+- **ODM:** Mongoose
+- **Authentication:** JWT (jsonwebtoken)
+- **Security:** Helmet, bcryptjs
+- **Validation:** express-validator
+- **Language:** TypeScript
+
+### Frontend
+- **Framework:** React + Vite
+- **UI:** Shadcn/ui + Tailwind CSS
+- **Routing:** React Router
+- **State:** React Query
+- **Language:** TypeScript
+
+## Troubleshooting
+
+### Backend won't start
+- Check if MongoDB is running
+- Verify `MONGODB_URI` in `.env`
+- Check if port 5000 is available
+
+### Frontend can't connect to backend
+- Verify backend is running on port 5000
+- Check `VITE_API_URL` in frontend `.env`
+- Check CORS settings in backend
+
+### Authentication issues
+- Clear browser localStorage
+- Check JWT_SECRET is set in backend `.env`
+- Verify token is being sent in Authorization header

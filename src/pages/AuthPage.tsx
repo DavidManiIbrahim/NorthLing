@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { apiClient } from "@/lib/api-client";
 import { useAuth } from '@/hooks/useAuth';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 
@@ -19,12 +19,12 @@ const AuthPage = () => {
     password: '',
     confirmPassword: ''
   });
-  
+
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const { userRole } = useAuth();
-  
+
   const from = location.state?.from?.pathname || '/';
 
   const handleInputChange = (field: string, value: string) => {
@@ -36,36 +36,25 @@ const AuthPage = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
+      const data = await apiClient.signIn(formData.email, formData.password);
+
+      toast({
+        title: "Welcome back!",
+        description: "Logged in successfully",
       });
 
-      if (error) {
-        toast({
-          title: "Login Error",
-          description: error.message,
-          variant: "destructive"
-        });
-      } else if (data.user) {
-        toast({
-          title: "Welcome back!",
-          description: "Logged in successfully",
-        });
-        
-        // Redirect based on user role
-        setTimeout(() => {
-          if (userRole === 'admin') {
-            navigate('/admin');
-          } else {
-            navigate('/dashboard');
-          }
-        }, 1000);
-      }
-    } catch (error) {
+      // Redirect based on user role
+      setTimeout(() => {
+        if (data.user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
+      }, 1000);
+    } catch (error: any) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Login Error",
+        description: error.message || "Invalid credentials",
         variant: "destructive"
       });
     } finally {
@@ -75,7 +64,7 @@ const AuthPage = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       toast({
         title: "Error",
@@ -85,38 +74,38 @@ const AuthPage = () => {
       return;
     }
 
+    if (formData.password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.name,
-            username: formData.name.toLowerCase().replace(/\s+/g, '_'),
-            role: 'user'
-          },
-          emailRedirectTo: `${window.location.origin}/dashboard`
-        }
+      const data = await apiClient.signUp(formData.email, formData.password);
+
+      // Update profile with username
+      if (formData.name) {
+        await apiClient.updateProfile(formData.name);
+      }
+
+      toast({
+        title: "Account created!",
+        description: "Welcome to NorthLing",
       });
 
-      if (error) {
-        toast({
-          title: "Signup Error",
-          description: error.message,
-          variant: "destructive"
-        });
-      } else if (data.user) {
-        toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account",
-        });
-      }
-    } catch (error) {
+      // Redirect to dashboard
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
+    } catch (error: any) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Signup Error",
+        description: error.message || "An error occurred during signup",
         variant: "destructive"
       });
     } finally {
@@ -139,7 +128,7 @@ const AuthPage = () => {
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
@@ -157,7 +146,7 @@ const AuthPage = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="login-password">Password</Label>
                   <div className="relative">
@@ -186,13 +175,13 @@ const AuthPage = () => {
                     </Button>
                   </div>
                 </div>
-                
+
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
             </TabsContent>
-            
+
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
@@ -210,7 +199,7 @@ const AuthPage = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <div className="relative">
@@ -226,7 +215,7 @@ const AuthPage = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
                   <div className="relative">
@@ -255,7 +244,7 @@ const AuthPage = () => {
                     </Button>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signup-confirm-password">Confirm Password</Label>
                   <div className="relative">
@@ -271,7 +260,7 @@ const AuthPage = () => {
                     />
                   </div>
                 </div>
-                
+
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Creating account..." : "Create Account"}
                 </Button>
