@@ -23,11 +23,19 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response): Promise
 // Update user preferences
 router.patch('/', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const { language, theme, notifications } = req.body;
+        const { language, theme, notifications, baseLanguage, targetLanguage, spokenLanguages, learningLanguages } = req.body;
 
         const preferences = await UserPreferences.findOneAndUpdate(
             { userId: req.userId },
-            { language, theme, notifications },
+            {
+                language,
+                theme,
+                notifications,
+                baseLanguage,
+                targetLanguage,
+                spokenLanguages,
+                learningLanguages
+            },
             { new: true, upsert: true }
         );
 

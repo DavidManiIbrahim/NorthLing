@@ -21,14 +21,10 @@ const NewUserLanguageFlow = ({ onComplete }: NewUserLanguageFlowProps) => {
 
       try {
         // Check if user already has language preferences
-        const { data: stats } = await supabase
-          .from('user_stats')
-          .select('base_language, target_language')
-          .eq('user_id', user.id)
-          .single();
+        const { preferences } = await apiClient.getCurrentUser();
 
         // If no languages set, show the flow
-        if (!stats || !stats.base_language || !stats.target_language) {
+        if (!preferences || !preferences.baseLanguage || !preferences.targetLanguage) {
           setShouldShowFlow(true);
           setShowBaseLanguageModal(true);
         }
@@ -54,29 +50,20 @@ const NewUserLanguageFlow = ({ onComplete }: NewUserLanguageFlowProps) => {
   const handleTargetLanguageSelect = async (language: string) => {
     setShowTargetLanguageModal(false);
     setShouldShowFlow(false);
-    
-    const languages = { base: selectedBaseLanguage, target: language };
-    
+
     // Save languages to database
     if (user) {
       try {
-        await supabase
-          .from('user_stats')
-          .upsert({
-            user_id: user.id,
-            base_language: selectedBaseLanguage,
-            target_language: language,
-            words_learned: 0,
-            streak: 0,
-            points: 0,
-            level: 1
-          });
+        await apiClient.updatePreferences({
+          baseLanguage: selectedBaseLanguage,
+          targetLanguage: language
+        });
       } catch (error) {
         console.error('Error saving user languages:', error);
       }
     }
-    
-    onComplete(languages);
+
+    onComplete({ base: selectedBaseLanguage, target: language });
   };
 
   if (!shouldShowFlow) {

@@ -1,59 +1,93 @@
 import React, { useState, useEffect, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import LanguageSelector from '@/components/LanguageSelector';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/hooks/useAuth';
 import { useUserProgress } from '@/hooks/useUserProgress';
-// import VocabularyCard from '@/components/VocabularyCard';
-// import QuizSection from '@/components/QuizSection';
-
-// Dynamic component loading based on selected language
-const languageComponentMap = {
-  // Components will be loaded dynamically from the new unified language system
-};
-
-const DynamicLanguageComponent = ({ type, languages }) => {
-  return (
-    <div className="text-center p-8">
-      Loading content for {languages.target} {type}...
-      <p className="text-sm text-gray-500 mt-2">Content will be available soon.</p>
-    </div>
-  );
-};
 import Leaderboard from '@/components/Leaderboard';
-import { 
-  BookOpen, 
-  Brain, 
-  Trophy, 
-  Star, 
-  Target, 
+import {
+  BookOpen,
+  Brain,
+  Trophy,
+  Star,
+  Target,
   Check,
-  Clock, 
+  Clock,
   LogOut,
   Settings,
-  User
+  User,
+  LayoutDashboard,
+  ListChecks,
+  ListOrdered,
+  Award
 } from 'lucide-react';
+import VocabularyCard from '@/components/VocabularyCard';
+import QuizSection from '@/components/QuizSection';
+import LessonsSection from '@/components/LessonsSection';
+
+// ...
 
 const DashboardPage = () => {
   const { user, signOut, userRole } = useAuth();
-  const { userProfile, loading: userLoading } = useUserProgress();
+  const { userProfile, loading: userLoading, updateLearningLanguage } = useUserProgress();
   const navigate = useNavigate();
-  const [selectedLanguages, setSelectedLanguages] = useState({ base: '', target: '' });
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Initialize state
   const [showLanguageModal, setShowLanguageModal] = useState(false);
-  const [currentSection, setCurrentSection] = useState('dashboard');
+  // Default section from URL or 'dashboard'
+  const [currentSection, setCurrentSection] = useState(searchParams.get('tab') || 'dashboard');
+
+  // Load saved language preference from localStorage or default
+  const savedBase = localStorage.getItem('northling_base_lang');
+  const savedTarget = localStorage.getItem('northling_target_lang');
+
+  const [selectedLanguages, setSelectedLanguages] = useState({
+    base: savedBase || '',
+    target: savedTarget || ''
+  });
+
+  // Sync currentSection with URL
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab && tab !== currentSection) {
+      setCurrentSection(tab);
+    } else if (!tab && currentSection !== 'dashboard') {
+      // If no tab but section is not dashboard, update URL
+      setSearchParams({ tab: currentSection });
+    }
+  }, [searchParams, currentSection]);
+
+  // Update URL when section changes manually
+  const handleSectionChange = (section: string) => {
+    setCurrentSection(section);
+    setSearchParams({ tab: section });
+  };
 
   useEffect(() => {
-    // Set default languages for demo purposes if no language preferences exist
-    if (!selectedLanguages.base || !selectedLanguages.target) {
-      setSelectedLanguages({
-        base: 'English', // or 'Hausa', 'Fulani', 'Fulfulde'
-        target: 'Hausa' // or 'English', 'Fulani', 'Fulfulde'
-      });
+    // If user has a preference saved in profile which we should respect on load
+    if (!selectedLanguages.target) {
+      if (userProfile?.studying_language) {
+        const newLangs = {
+          base: 'English',
+          target: userProfile.studying_language
+        };
+        setSelectedLanguages(newLangs);
+        localStorage.setItem('northling_base_lang', newLangs.base);
+        localStorage.setItem('northling_target_lang', newLangs.target);
+      } else {
+        // Default fallback
+        const defaultLangs = {
+          base: 'English',
+          target: 'Hausa'
+        };
+        setSelectedLanguages(defaultLangs);
+      }
     }
   }, [userProfile]);
 
@@ -108,14 +142,14 @@ const DashboardPage = () => {
                 {userRole === 'admin' ? 'Admin' : 'Student'}
               </Badge>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <Star className="h-4 w-4 text-yellow-500" />
                 <span className="font-semibold">{userProfile?.points || 0}</span>
               </div>
               <div className="text-sm text-gray-600">Level {userProfile?.current_level || 1}</div>
-              
+
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -126,12 +160,13 @@ const DashboardPage = () => {
       </header>
 
       {/* Navigation */}
-      {/* <nav className="bg-white border-b">
+      {/* Navigation */}
+      <nav className="bg-white border-b sticky top-0 z-10">
         <div className="container mx-auto px-4">
-          <div className="flex space-x-8">
+          <div className="flex space-x-8 overflow-x-auto">
             <Button
               variant={currentSection === 'dashboard' ? 'default' : 'ghost'}
-              onClick={() => setCurrentSection('dashboard')}
+              onClick={() => handleSectionChange('dashboard')}
               className="flex items-center space-x-2"
             >
               <Target className="h-4 w-4" />
@@ -139,23 +174,31 @@ const DashboardPage = () => {
             </Button>
             <Button
               variant={currentSection === 'vocabulary' ? 'default' : 'ghost'}
-              onClick={() => setCurrentSection('vocabulary')}
+              onClick={() => handleSectionChange('vocabulary')}
               className="flex items-center space-x-2"
             >
               <BookOpen className="h-4 w-4" />
               <span>Vocabulary</span>
             </Button>
             <Button
-              variant={currentSection === 'quiz' ? 'default' : 'ghost'}
-              onClick={() => setCurrentSection('quiz')}
+              variant={currentSection === 'lessons' ? 'default' : 'ghost'}
+              onClick={() => handleSectionChange('lessons')}
               className="flex items-center space-x-2"
             >
               <Brain className="h-4 w-4" />
+              <span>Lessons</span>
+            </Button>
+            <Button
+              variant={currentSection === 'quiz' ? 'default' : 'ghost'}
+              onClick={() => handleSectionChange('quiz')}
+              className="flex items-center space-x-2"
+            >
+              <Trophy className="h-4 w-4" />
               <span>Quiz</span>
             </Button>
             <Button
               variant={currentSection === 'leaderboard' ? 'default' : 'ghost'}
-              onClick={() => setCurrentSection('leaderboard')}
+              onClick={() => handleSectionChange('leaderboard')}
               className="flex items-center space-x-2"
             >
               <Trophy className="h-4 w-4" />
@@ -163,7 +206,7 @@ const DashboardPage = () => {
             </Button>
           </div>
         </div>
-      </nav> */}
+      </nav>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
@@ -179,7 +222,7 @@ const DashboardPage = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-purple-700 mb-4">{getMotivationalMessage()}</p>
-                
+
                 <div className="flex items-center space-x-2 text-sm text-purple-600">
                   <span>Learning {selectedLanguages.target}</span>
                   <span>•</span>
@@ -191,10 +234,19 @@ const DashboardPage = () => {
 
                 <Dialog open={showLanguageModal} onOpenChange={setShowLanguageModal}>
                   <DialogContent className="max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle>Change Language</DialogTitle>
+                      <DialogDescription>
+                        Select your native language and the language you want to learn.
+                      </DialogDescription>
+                    </DialogHeader>
                     <LanguageSelector
                       onLanguageSelect={(langs) => {
                         setSelectedLanguages(langs);
+                        localStorage.setItem('northling_base_lang', langs.base);
+                        localStorage.setItem('northling_target_lang', langs.target);
                         setShowLanguageModal(false);
+                        updateLearningLanguage(langs.target);
                       }}
                     />
                   </DialogContent>
@@ -213,9 +265,9 @@ const DashboardPage = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-blue-600 mb-4">Learn and practice new words in {selectedLanguages.target}</p>
-                  <Button 
+                  <Button
                     className="w-full bg-blue-600 hover:bg-blue-700"
-                    onClick={() => navigate('/vocabulary')}
+                    onClick={() => handleSectionChange('vocabulary')}
                   >
                     Start Learning
                   </Button>
@@ -231,9 +283,9 @@ const DashboardPage = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-purple-600 mb-4">Interactive lessons to improve your {selectedLanguages.target}</p>
-                  <Button 
+                  <Button
                     className="w-full bg-purple-600 hover:bg-purple-700"
-                    onClick={() => navigate('/course')}
+                    onClick={() => handleSectionChange('lessons')}
                   >
                     Start Learning
                   </Button>
@@ -249,9 +301,9 @@ const DashboardPage = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-green-600 mb-4">Test your knowledge with interactive quizzes</p>
-                  <Button 
+                  <Button
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => navigate('/quiz')}
+                    onClick={() => handleSectionChange('quiz')}
                   >
                     Start Quiz
                   </Button>
@@ -270,7 +322,7 @@ const DashboardPage = () => {
                   <div className="text-xs text-blue-600 mt-1">+3 this week</div>
                 </CardContent>
               </Card>
-              
+
               <Card className="bg-gradient-to-br from-orange-50 to-red-100 border-red-200">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-red-700">Current Streak</CardTitle>
@@ -280,7 +332,7 @@ const DashboardPage = () => {
                   <div className="text-xs text-red-600 mt-1">🔥 Keep it going!</div>
                 </CardContent>
               </Card>
-              
+
               <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-purple-700">Total Points</CardTitle>
@@ -317,13 +369,12 @@ const DashboardPage = () => {
                     return (
                       <div key={day} className="text-center">
                         <div className="text-xs text-gray-600 mb-1">{day}</div>
-                        <div 
-                          className={`h-8 w-8 rounded mx-auto ${
-                            activity === 0 ? 'bg-gray-200' :
+                        <div
+                          className={`h-8 w-8 rounded mx-auto ${activity === 0 ? 'bg-gray-200' :
                             activity === 1 ? 'bg-purple-200' :
-                            activity === 2 ? 'bg-purple-400' :
-                            'bg-purple-600'
-                          }`}
+                              activity === 2 ? 'bg-purple-400' :
+                                'bg-purple-600'
+                            }`}
                         />
                       </div>
                     );
@@ -411,9 +462,8 @@ const DashboardPage = () => {
                     { name: "Word Master", icon: "📚", desc: "Learned 10 new words", unlocked: (userProfile?.stages_completed?.vocabulary?.length || 0) >= 10 },
                     { name: "Quiz Champion", icon: "🏆", desc: "Perfect quiz score", unlocked: (userProfile?.stages_completed?.quiz?.length || 0) >= 1 },
                   ].map((achievement, index) => (
-                    <div key={index} className={`flex items-center space-x-3 p-3 rounded-lg ${
-                      achievement.unlocked ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50 border border-gray-200 opacity-60'
-                    }`}>
+                    <div key={index} className={`flex items-center space-x-3 p-3 rounded-lg ${achievement.unlocked ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50 border border-gray-200 opacity-60'
+                      }`}>
                       <div className="text-2xl">{achievement.icon}</div>
                       <div className="flex-1">
                         <div className={`font-medium ${achievement.unlocked ? 'text-yellow-800' : 'text-gray-600'}`}>
@@ -434,40 +484,42 @@ const DashboardPage = () => {
               </CardContent>
             </Card>
           </div>
-        )}
+        )
+        }
 
 
 
 
-        {currentSection === 'vocabulary' && (
-          <DynamicLanguageComponent
-            type="Vocabulary"
-            languages={selectedLanguages}
-          />
-        )}
+        {
+          currentSection === 'vocabulary' && (
+            <VocabularyCard languages={selectedLanguages} />
+          )
+        }
 
-        {currentSection === 'quiz' && (
-          <DynamicLanguageComponent
-            type="Quiz"
-            languages={selectedLanguages}
-          />
-        )}
+        {
+          currentSection === 'quiz' && (
+            <QuizSection languages={selectedLanguages} />
+          )
+        }
 
-        {currentSection === 'lessons' && (
-          <DynamicLanguageComponent
-            type="Lessons"
-            languages={selectedLanguages}
-          />
-        )}
 
-        {currentSection === 'leaderboard' && (
-          <Leaderboard 
-            targetLanguage={selectedLanguages.target}
-            currentUserId={user?.id}
-          />
-        )}
-      </main>
-    </div>
+
+        {
+          currentSection === 'lessons' && (
+            <LessonsSection languages={selectedLanguages} />
+          )
+        }
+
+        {
+          currentSection === 'leaderboard' && (
+            <Leaderboard
+              targetLanguage={selectedLanguages.target}
+              currentUserId={user?.id}
+            />
+          )
+        }
+      </main >
+    </div >
   );
 };
 

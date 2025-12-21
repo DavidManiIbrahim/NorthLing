@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLocalization } from '@/hooks/useLocalization';
 import LanguageSelectionFlow from './LanguageSelectionFlow';

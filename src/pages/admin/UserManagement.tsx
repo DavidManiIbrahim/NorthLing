@@ -3,18 +3,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { 
-  Users, 
-  Search, 
-  Filter, 
+import {
+  Users,
+  Search,
+  Filter,
   MoreVertical,
   UserCheck,
   UserX,
   Mail,
   Calendar
 } from 'lucide-react';
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+// import { supabase } from "@/integrations/supabase/client";
 
 interface User {
   id: string;
@@ -39,13 +39,14 @@ const UserManagement = () => {
 
   const loadUsers = async () => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // const { data, error } = await supabase
+      //   .from('profiles')
+      //   .select('*')
+      //   .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setUsers(data || []);
+      // if (error) throw error;
+      setUsers([]);
+      console.log('User management currently disabled due to backend migration');
     } catch (error) {
       console.error('Error loading users:', error);
       toast({
@@ -67,7 +68,7 @@ const UserManagement = () => {
 
       if (error) throw error;
 
-      setUsers(users.map(user => 
+      setUsers(users.map(user =>
         user.id === userId ? { ...user, role: newRole } : user
       ));
 
@@ -86,7 +87,7 @@ const UserManagement = () => {
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.full_name.toLowerCase().includes(searchTerm.toLowerCase());
+      user.full_name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = filterRole === 'all' || user.role === filterRole;
     return matchesSearch && matchesRole;
   });
@@ -173,7 +174,7 @@ const UserManagement = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-4">
                   <div className="text-right">
                     <div className="text-sm font-medium">{user.points || 0} points</div>
@@ -181,7 +182,7 @@ const UserManagement = () => {
                       {user.role}
                     </Badge>
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     {user.role === 'user' ? (
                       <Button
@@ -202,7 +203,7 @@ const UserManagement = () => {
                         Remove Admin
                       </Button>
                     )}
-                    
+
                     <Button size="sm" variant="ghost">
                       <MoreVertical className="h-4 w-4" />
                     </Button>
@@ -210,7 +211,7 @@ const UserManagement = () => {
                 </div>
               </div>
             ))}
-            
+
             {filteredUsers.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />

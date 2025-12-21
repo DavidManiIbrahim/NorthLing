@@ -105,6 +105,10 @@ class ApiClient {
         language?: string;
         theme?: string;
         notifications?: boolean;
+        baseLanguage?: string;
+        targetLanguage?: string;
+        spokenLanguages?: string[];
+        learningLanguages?: string[];
     }) {
         return this.request<any>('/preferences', {
             method: 'PATCH',

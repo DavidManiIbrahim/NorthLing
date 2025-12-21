@@ -27,11 +27,12 @@ const AppLayout = () => {
 
   const links = [
     // { to: "/", label: "Home", icon: Home },
+    // Link all learning sections to the dashboard with a query param
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/course", label: "Lessons", icon: BookOpen },
-    { to: "/quiz", label: "Quiz", icon: ListChecks },
-    { to: "/leaderboard", label: "Leaderboard", icon: Award },
-    { to: "/vocabulary", label: "Vocabulary", icon: ListOrdered },
+    { to: "/dashboard?tab=lessons", label: "Lessons", icon: BookOpen },
+    { to: "/dashboard?tab=quiz", label: "Quiz", icon: ListChecks },
+    { to: "/dashboard?tab=leaderboard", label: "Leaderboard", icon: Award },
+    { to: "/dashboard?tab=vocabulary", label: "Vocabulary", icon: ListOrdered },
     { to: "/achievements", label: "Achievements", icon: Trophy },
     // { to: "/community", label: "Community", icon: Users },
   ];
@@ -67,7 +68,7 @@ const AppLayout = () => {
                 })}
                 {userRole === "admin" && (
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={location.pathname.startsWith("/admin")}> 
+                    <SidebarMenuButton asChild isActive={location.pathname.startsWith("/admin")}>
                       <NavLink to="/admin" className="flex items-center gap-2">
                         <Brain className="h-4 w-4" />
                         <span>Admin</span>

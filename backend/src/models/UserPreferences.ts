@@ -2,7 +2,11 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IUserPreferences extends Document {
     userId: mongoose.Types.ObjectId;
-    language: string;
+    language: string; // Keep for backward compatibility or UI language
+    baseLanguage: string;
+    targetLanguage: string;
+    spokenLanguages: string[];
+    learningLanguages: string[];
     theme: 'light' | 'dark' | 'system';
     notifications: boolean;
     createdAt: Date;
@@ -20,6 +24,22 @@ const userPreferencesSchema = new Schema<IUserPreferences>(
         language: {
             type: String,
             default: 'en',
+        },
+        baseLanguage: {
+            type: String,
+            default: 'en',
+        },
+        targetLanguage: {
+            type: String,
+            default: 'es',
+        },
+        spokenLanguages: {
+            type: [String],
+            default: ['en'],
+        },
+        learningLanguages: {
+            type: [String],
+            default: [],
         },
         theme: {
             type: String,

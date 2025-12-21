@@ -13,154 +13,18 @@ interface VocabularyCardProps {
   languages: { base: string; target: string };
 }
 
+import { VOCABULARY_DATA } from "@/data/vocabularyData";
+
+// ...
+
 function VocabularyCard({ languages }: VocabularyCardProps) {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [knownWords, setKnownWords] = useState<number[]>([]);
   const [currentStage, setCurrentStage] = useState<any>(null);
   const [unlockedState, setUnlockedState] = useState<{ stage: number, nextStage?: number } | null>(null);
-  const [stages, setStages] = useState<any[]>([
-    {
-      id: 1, level: 1, words: [
-        { word: 'Sannu', translation: 'Hello', difficulty: 'easy' },
-        { word: 'Sai anjima', translation: 'Goodbye', difficulty: 'easy' },
-        { word: 'Nagode', translation: 'Thank you', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 2, level: 2, words: [
-        { word: 'Ruwa', translation: 'Water', difficulty: 'easy' },
-        { word: 'Abinci', translation: 'Food', difficulty: 'easy' },
-        { word: 'Shinkafa', translation: 'Rice', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 3, level: 3, words: [
-        { word: 'Gida', translation: 'House', difficulty: 'easy' },
-        { word: 'Daki', translation: 'Room', difficulty: 'easy' },
-        { word: 'Makaranta', translation: 'School', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 4, level: 4, words: [
-        { word: 'Littafi', translation: 'Book', difficulty: 'easy' },
-        { word: 'Alkalam', translation: 'Pen', difficulty: 'easy' },
-        { word: 'Malam', translation: 'Teacher', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 5, level: 5, words: [
-        { word: 'Mota', translation: 'Car', difficulty: 'easy' },
-        { word: 'Keke', translation: 'Bicycle', difficulty: 'easy' },
-        { word: 'Kasuwa', translation: 'Market', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 6, level: 6, words: [
-        { word: 'Shago', translation: 'Shop', difficulty: 'easy' },
-        { word: 'Kudi', translation: 'Money', difficulty: 'easy' },
-        { word: 'Gona', translation: 'Farm', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 7, level: 7, words: [
-        { word: 'Dutse', translation: 'Mountain', difficulty: 'easy' },
-        { word: 'Kogi', translation: 'River', difficulty: 'easy' },
-        { word: 'Daji', translation: 'Forest', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 8, level: 8, words: [
-        { word: 'Hanya', translation: 'Road', difficulty: 'easy' },
-        { word: 'Birni', translation: 'City', difficulty: 'easy' },
-        { word: 'Kauye', translation: 'Village', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 9, level: 9, words: [
-        { word: 'Ido', translation: 'Eye', difficulty: 'easy' },
-        { word: 'Hannu', translation: 'Hand', difficulty: 'easy' },
-        { word: 'Kafa', translation: 'Leg', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 10, level: 10, words: [
-        { word: 'Baki', translation: 'Mouth', difficulty: 'easy' },
-        { word: 'Hanci', translation: 'Nose', difficulty: 'easy' },
-        { word: 'Kunne', translation: 'Ear', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 11, level: 11, words: [
-        { word: 'Uba', translation: 'Father', difficulty: 'easy' },
-        { word: 'Uwa', translation: 'Mother', difficulty: 'easy' },
-        { word: 'Yaro', translation: 'Boy', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 12, level: 12, words: [
-        { word: 'Yarinya', translation: 'Girl', difficulty: 'easy' },
-        { word: 'Aboki', translation: 'Friend (male)', difficulty: 'easy' },
-        { word: 'Abokiya', translation: 'Friend (female)', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 13, level: 13, words: [
-        { word: 'Kifi', translation: 'Fish', difficulty: 'easy' },
-        { word: 'Kaji', translation: 'Chicken', difficulty: 'easy' },
-        { word: 'Nama', translation: 'Meat', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 14, level: 14, words: [
-        { word: 'Doya', translation: 'Yam', difficulty: 'easy' },
-        { word: 'Wake', translation: 'Beans', difficulty: 'easy' },
-        { word: 'Gyada', translation: 'Groundnut', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 15, level: 15, words: [
-        { word: 'Ayaba', translation: 'Banana', difficulty: 'easy' },
-        { word: 'Lemu', translation: 'Orange', difficulty: 'easy' },
-        { word: 'Tumatir', translation: 'Tomato', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 16, level: 16, words: [
-        { word: 'Kwakwa', translation: 'Coconut', difficulty: 'easy' },
-        { word: 'Dabino', translation: 'Date', difficulty: 'easy' },
-        { word: 'Zuma', translation: 'Honey', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 17, level: 17, words: [
-        { word: 'Goro', translation: 'Kola nut', difficulty: 'easy' },
-        { word: 'Kwakwa', translation: 'Coconut', difficulty: 'easy' },
-        { word: 'Kankana', translation: 'Watermelon', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 18, level: 18, words: [
-        { word: 'Agogo', translation: 'Clock', difficulty: 'easy' },
-        { word: 'Tebur', translation: 'Table', difficulty: 'easy' },
-        { word: 'Kujera', translation: 'Chair', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 19, level: 19, words: [
-        { word: 'Tagar', translation: 'Window', difficulty: 'easy' },
-        { word: 'Kofa', translation: 'Door', difficulty: 'easy' },
-        { word: 'Bango', translation: 'Wall', difficulty: 'easy' }
-      ]
-    },
-    {
-      id: 20, level: 20, words: [
-        { word: 'Kasa', translation: 'Floor', difficulty: 'easy' },
-        { word: 'Hasken', translation: 'Light', difficulty: 'easy' },
-        { word: 'Duhu', translation: 'Dark', difficulty: 'easy' }
-      ]
-    }
-  ]);
+  const [stages, setStages] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(false);
   const [stageProgress, setStageProgress] = useState<Record<number, number>>({});
   const { userProfile, updateProgress, loading: userLoading } = useUserProgress();
@@ -168,61 +32,30 @@ function VocabularyCard({ languages }: VocabularyCardProps) {
   const completedStages = userProfile?.stages_completed?.vocabulary || [];
 
   useEffect(() => {
-    const fetchStages = async () => {
-      try {
-        const { data: vocabStages, error } = await supabase
-          .from('vocabulary_stages')
-          .select('*')
-          .order('level', { ascending: true });
+    // Load stages based on target language
+    const targetLang = languages?.target;
+    // Strict lookup: only show data for the selected target language
+    const data = VOCABULARY_DATA[targetLang];
 
-        if (error) {
-          console.error('Database error:', error);
-          // If table doesn't exist, create some sample data
-          if (error.message.includes('relation "vocabulary_stages" does not exist')) {
-            console.log('Creating sample vocabulary stages...');
-            const sampleStages: VocabularyStage[] = [
-              {
-                id: 1,
-                level: 1,
-                words: [
-                  { word: 'Sannu', translation: 'Hello', difficulty: 'easy' },
-                  { word: 'Nagode', translation: 'Thank you', difficulty: 'easy' },
-                  { word: 'Ina kwana', translation: 'Good morning', difficulty: 'easy' },
-                  { word: 'Ina lafiya?', translation: 'How are you?', difficulty: 'easy' },
-                  { word: 'Gida', translation: 'Home', difficulty: 'easy' },
-                  { word: 'Abinci', translation: 'Food', difficulty: 'easy' },
-                  { word: 'Ruwa', translation: 'Water', difficulty: 'easy' },
-                  { word: 'Kudi', translation: 'Money', difficulty: 'easy' },
-                  { word: 'Makaranta', translation: 'School', difficulty: 'easy' },
-                  { word: 'Kasuwa', translation: 'Market', difficulty: 'easy' }
-                ]
-              }
-            ];
-            setStages(sampleStages);
-            setCurrentStage(sampleStages[0]);
-          } else {
-            throw error;
-          }
-        } else {
-          setStages(vocabStages || []);
-          if (vocabStages && vocabStages.length > 0) {
-            setCurrentStage(vocabStages[0]);
-          }
+    if (data) {
+      setStages(data);
+
+      // Set first stage as current if not set
+      if (data.length > 0 && !currentStage) {
+        setCurrentStage(data[0]);
+      } else if (currentStage && data.length > 0) {
+        // If language changed, verify current stage belongs to new language, otherwise reset
+        const stageExists = data.find(s => s.id === currentStage.id);
+        if (!stageExists) {
+          setCurrentStage(data[0]);
+          setCurrentCardIndex(0);
+          setKnownWords([]);
         }
-      } catch (error) {
-        console.error('Error fetching vocabulary stages:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load vocabulary stages. Please try again later.",
-          variant: "destructive"
-        });
-      } finally {
-        setLoading(false);
       }
-    };
 
-    fetchStages();
-  }, [toast]);
+      setLoading(false);
+    }
+  }, [languages.target]);
 
   const nextCard = () => {
     if (!currentStage) return;
@@ -467,14 +300,14 @@ function VocabularyCard({ languages }: VocabularyCardProps) {
                   {currentCard.word}
                 </div>
                 <div className="text-gray-600 italic">
-                  {languages.base}
+                  {languages.target}
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
-                    playAudio(currentCard.word, languages.base);
+                    playAudio(currentCard.word, languages.target); // Target word, usually Hausa
                   }}
                 >
                   <Headphones className="h-4 w-4 mr-2" />
@@ -488,7 +321,7 @@ function VocabularyCard({ languages }: VocabularyCardProps) {
             <CardContent>
               <div className="text-center space-y-4">
                 <div className="text-sm text-gray-500 uppercase tracking-wide">
-                  Translation in {languages.target}
+                  Translation in {languages.base}
                 </div>
                 <div className="text-4xl font-bold text-blue-600">
                   {currentCard.translation}
@@ -519,28 +352,14 @@ function VocabularyCard({ languages }: VocabularyCardProps) {
           onClick={handleDontKnowWord}
           variant="outline"
           className="flex-1 max-w-xs"
-          // disabled={loading || userLoading || !userProfile}
+        // disabled={loading || userLoading || !userProfile}
         >
           Still Learning
         </Button>
         <Button
-          // onClick={handleKnowWord}
-          onClick={() => {
-            const nextStage = stages.find(s => s.id === currentStage.id + 1);
-            if (nextStage) {
-              setCurrentStage(nextStage);
-              setCurrentQuiz(0);
-              setScore(0);
-              setStreakCount(0);
-              setShowResult(false);
-            }else{
-              toast({ title: "All stages completed!", variant: "success" });
-
-            }
-          }
-          }
+          onClick={handleKnowWord}
           className="flex-1 max-w-xs bg-green-600 hover:bg-green-700 disabled:bg-gray-400"
-          // disabled={loading || userLoading || !userProfile}
+        // disabled={loading || userLoading || !userProfile}
         >
           {/* {loading || userLoading ? (
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-white mr-2" />

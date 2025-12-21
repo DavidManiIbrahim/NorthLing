@@ -21,19 +21,51 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response): Promise
     }
 });
 
-// Update user progress
+// Get user progress
 router.patch('/', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const { level, xp, streak, lessonsCompleted } = req.body;
+        const { level, xp, lessonsCompleted } = req.body;
+
+        // Fetch current progress to calculate streak
+        let currentProgress = await UserProgress.findOne({ userId: req.userId });
+
+        // Calculate Streak
+        let newStreak = currentProgress?.streak || 0;
+        const now = new Date();
+        const lastActivity = currentProgress?.lastActivityDate;
+
+        if (lastActivity) {
+            const lastDate = new Date(lastActivity);
+            const today = new Date(now);
+
+            // Reset hours to compare dates only
+            lastDate.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+
+            const diffTime = Math.abs(today.getTime() - lastDate.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 1) {
+                // Consecutive day
+                newStreak += 1;
+            } else if (diffDays > 1) {
+                // Streak broken
+                newStreak = 1;
+            }
+            // If diffDays === 0 (same day), keep existing streak
+        } else {
+            // First activity
+            newStreak = 1;
+        }
 
         const progress = await UserProgress.findOneAndUpdate(
             { userId: req.userId },
             {
                 level,
                 xp,
-                streak,
+                streak: newStreak,
                 lessonsCompleted,
-                lastActivityDate: new Date(),
+                lastActivityDate: now,
             },
             { new: true, upsert: true }
         );
@@ -43,7 +75,7 @@ router.patch('/', authMiddleware, async (req: AuthRequest, res: Response): Promi
             userId: req.userId,
             type: 'progress_update',
             description: 'User progress updated',
-            metadata: { level, xp, streak, lessonsCompleted },
+            metadata: { level, xp, streak: newStreak, lessonsCompleted },
         });
 
         res.json(progress);

@@ -18,7 +18,7 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:1000';
 // Middleware
 app.use(helmet());
 app.use(cors({
-    origin: CORS_ORIGIN,
+    origin: [CORS_ORIGIN, 'http://127.0.0.1:1000', 'http://localhost:5173'], // Added common fallback ports
     credentials: true,
 }));
 app.use(morgan('dev'));

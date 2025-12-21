@@ -6,7 +6,7 @@ import LandingPage from '@/components/LandingPage';
 import LocalizedDashboard from '@/components/enhanced/LocalizedDashboard';
 import VocabularyCard from '@/components/VocabularyCard';
 import QuizSection from '@/components/QuizSection';
-import { supabase } from "@/integrations/supabase/client";
+import { apiClient } from '@/lib/api-client';
 
 const Index = () => {
   const { isAuthenticated, user } = useAuth();
@@ -37,36 +37,32 @@ const Index = () => {
     if (!user) return;
 
     try {
-      // Load language preferences
-      const { data: languagePrefs } = await supabase
-        .from('user_language_preferences')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
+      const userData = await apiClient.getCurrentUser();
 
-      if (languagePrefs) {
+      // Load language preferences
+      if (userData.preferences) {
+        const prefs = userData.preferences;
         setUserLanguages({
-          spoken: languagePrefs.spoken_languages || [],
-          learning: languagePrefs.learning_languages || [],
-          primarySpoken: languagePrefs.primary_spoken_language || 'en',
-          primaryLearning: languagePrefs.primary_learning_language || 'es'
+          spoken: prefs.spokenLanguages || [],
+          learning: prefs.learningLanguages || [],
+          primarySpoken: prefs.baseLanguage || 'en',
+          primaryLearning: prefs.targetLanguage || 'es'
         });
-        setHasLanguagePreferences((languagePrefs.spoken_languages?.length || 0) > 0 && (languagePrefs.learning_languages?.length || 0) > 0);
+        setHasLanguagePreferences(
+          (prefs.spokenLanguages?.length || 0) > 0 ||
+          (prefs.learningLanguages?.length || 0) > 0 ||
+          !!prefs.targetLanguage
+        );
       }
 
       // Load user stats
-      const { data: stats } = await supabase
-        .from('user_stats')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (stats) {
+      if (userData.progress) {
+        const prog = userData.progress;
         setUserProgress({
-          wordsLearned: stats.words_learned || 0,
-          streak: stats.streak || 0,
-          points: stats.points || 0,
-          level: stats.level || 1
+          wordsLearned: prog.lessonsCompleted || 0,
+          streak: prog.streak || 0,
+          points: prog.xp || 0,
+          level: prog.level || 1
         });
       }
     } catch (error) {
@@ -97,25 +93,25 @@ const Index = () => {
 
   // Show landing page for non-authenticated users
   if (!isAuthenticated) {
-    return <LandingPage onLanguageSelect={() => {}} />;
+    return <LandingPage onLanguageSelect={() => { }} />;
   }
 
   // Show localized dashboard for authenticated users with language preferences
   if (hasLanguagePreferences) {
     return (
-      <motion.div 
+      <motion.div
         className="min-h-screen"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <LocalizedDashboard 
+        <LocalizedDashboard
           progress={userProgress}
           languages={userLanguages}
           onSectionChange={handleSectionChange}
-          userName={user?.profile?.full_name || 'Student'}
+          userName={user?.username || 'Student'}
         />
-        
+
         <main className="container mx-auto px-4 py-8">
           <AnimatePresence mode="wait">
             <motion.div
@@ -126,16 +122,14 @@ const Index = () => {
               transition={{ duration: 0.3 }}
             >
               {currentSection === 'vocabulary' && (
-                <VocabularyCard 
+                <VocabularyCard
                   languages={{ base: userLanguages.primarySpoken, target: userLanguages.primaryLearning }}
-                  onProgress={() => {}}
                 />
               )}
-              
+
               {currentSection === 'quiz' && (
-                <QuizSection 
+                <QuizSection
                   languages={{ base: userLanguages.primarySpoken, target: userLanguages.primaryLearning }}
-                  onProgress={() => {}}
                 />
               )}
             </motion.div>
@@ -146,7 +140,7 @@ const Index = () => {
   }
 
   // Fallback - LanguageMiddleware should handle language selection flow
-  return <LandingPage onLanguageSelect={() => {}} />;
+  return <LandingPage onLanguageSelect={() => { }} />;
 };
 
 export default Index;

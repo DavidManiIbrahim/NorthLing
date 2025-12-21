@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
-import { supabase } from '@/integrations/supabase/client';
+import { apiClient } from '@/lib/api-client';
+
+
 import { Settings, Globe, Plus, X, Save } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
@@ -44,73 +46,20 @@ const LanguageSettings = ({ onClose }: LanguageSettingsProps) => {
     if (!user) return;
 
     try {
-      const { data } = await supabase
-        .from('user_language_preferences')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
+      const { preferences } = await apiClient.getCurrentUser();
 
-      if (data) {
-        setSpokenLanguages(data.spoken_languages || []);
-        setLearningLanguages(data.learning_languages || []);
-        setPrimarySpoken(data.primary_spoken_language || '');
-        setPrimaryLearning(data.primary_learning_language || '');
+      if (preferences) {
+        setSpokenLanguages(preferences.spokenLanguages || []);
+        setLearningLanguages(preferences.learningLanguages || []);
+        setPrimarySpoken(preferences.baseLanguage || '');
+        setPrimaryLearning(preferences.targetLanguage || '');
       }
     } catch (error) {
       console.error('Error loading user languages:', error);
     }
   };
 
-  const getLanguageName = (code: string) => {
-    return LANGUAGES.find(lang => lang.code === code)?.name || code;
-  };
-
-  const getLanguageFlag = (code: string) => {
-    return LANGUAGES.find(lang => lang.code === code)?.flag || '🏳️';
-  };
-
-  const handleSpokenLanguageToggle = (languageCode: string) => {
-    setSpokenLanguages(prev => {
-      const newLanguages = prev.includes(languageCode) 
-        ? prev.filter(code => code !== languageCode)
-        : [...prev, languageCode];
-      
-      // If removing primary spoken language, reset it
-      if (!newLanguages.includes(primarySpoken)) {
-        setPrimarySpoken(newLanguages[0] || '');
-      }
-      
-      setHasChanges(true);
-      return newLanguages;
-    });
-  };
-
-  const handleLearningLanguageToggle = (languageCode: string) => {
-    setLearningLanguages(prev => {
-      const newLanguages = prev.includes(languageCode) 
-        ? prev.filter(code => code !== languageCode)
-        : [...prev, languageCode];
-      
-      // If removing primary learning language, reset it
-      if (!newLanguages.includes(primaryLearning)) {
-        setPrimaryLearning(newLanguages[0] || '');
-      }
-      
-      setHasChanges(true);
-      return newLanguages;
-    });
-  };
-
-  const handlePrimarySpokenChange = (languageCode: string) => {
-    setPrimarySpoken(languageCode);
-    setLanguage(languageCode); // Update app language immediately
-    setHasChanges(true);
-  };
-
-  const handlePrimaryLearningChange = (languageCode: string) => {
-    setPrimaryLearning(languageCode);
-    setHasChanges(true);
-  };
+  // ...
 
   const handleSave = async () => {
     if (!user) return;
@@ -127,18 +76,15 @@ const LanguageSettings = ({ onClose }: LanguageSettingsProps) => {
     setIsLoading(true);
 
     try {
-      await supabase
-        .from('user_language_preferences')
-        .upsert({
-          user_id: user.id,
-          spoken_languages: spokenLanguages,
-          learning_languages: learningLanguages,
-          primary_spoken_language: primarySpoken,
-          primary_learning_language: primaryLearning
-        });
+      await apiClient.updatePreferences({
+        spokenLanguages: spokenLanguages,
+        learningLanguages: learningLanguages,
+        baseLanguage: primarySpoken,
+        targetLanguage: primaryLearning
+      });
 
       setHasChanges(false);
-      
+
       toast({
         title: "Settings Updated",
         description: "Your language preferences have been saved successfully."
@@ -159,42 +105,41 @@ const LanguageSettings = ({ onClose }: LanguageSettingsProps) => {
     }
   };
 
-  const LanguageCard = ({ 
-    language, 
-    isSelected, 
-    isPrimary, 
-    onToggle, 
-    onSetPrimary 
-  }: { 
-    language: Language; 
-    isSelected: boolean; 
+  const LanguageCard = ({
+    language,
+    isSelected,
+    isPrimary,
+    onToggle,
+    onSetPrimary
+  }: {
+    language: Language;
+    isSelected: boolean;
     isPrimary: boolean;
     onToggle: (code: string) => void;
     onSetPrimary?: (code: string) => void;
   }) => (
-    <div className={`p-3 border rounded-lg cursor-pointer transition-all ${
-      isSelected 
-        ? 'border-primary bg-primary/5' 
-        : 'border-border hover:border-primary/50'
-    }`}>
+    <div className={`p-3 border rounded-lg cursor-pointer transition-all ${isSelected
+      ? 'border-primary bg-primary/5'
+      : 'border-border hover:border-primary/50'
+      }`}>
       <div className="flex items-center justify-between">
-        <div 
+        <div
           className="flex items-center space-x-2 flex-1"
           onClick={() => onToggle(language.code)}
         >
           <span className="text-lg">{language.flag}</span>
           <span className="font-medium">{language.name}</span>
         </div>
-        
+
         {isSelected && (
           <div className="flex items-center space-x-2">
             {isPrimary && (
               <Badge variant="default" className="text-xs">Primary</Badge>
             )}
             {!isPrimary && onSetPrimary && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 className="h-6 px-2 text-xs"
                 onClick={() => onSetPrimary(language.code)}
               >
@@ -217,7 +162,7 @@ const LanguageSettings = ({ onClose }: LanguageSettingsProps) => {
 
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <motion.div 
+      <motion.div
         className="bg-card rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -247,12 +192,12 @@ const LanguageSettings = ({ onClose }: LanguageSettingsProps) => {
             <p className="text-sm text-muted-foreground mb-4">
               Select the languages you speak. The primary language will be used for the app interface.
             </p>
-            
+
             <div className="space-y-2 mb-4">
               {spokenLanguages.map(langCode => {
                 const language = LANGUAGES.find(l => l.code === langCode);
                 if (!language) return null;
-                
+
                 return (
                   <LanguageCard
                     key={langCode}
@@ -293,12 +238,12 @@ const LanguageSettings = ({ onClose }: LanguageSettingsProps) => {
             <p className="text-sm text-muted-foreground mb-4">
               Select the languages you want to learn. The primary language will be your main focus.
             </p>
-            
+
             <div className="space-y-2 mb-4">
               {learningLanguages.map(langCode => {
                 const language = LANGUAGES.find(l => l.code === langCode);
                 if (!language) return null;
-                
+
                 return (
                   <LanguageCard
                     key={langCode}
@@ -314,8 +259,8 @@ const LanguageSettings = ({ onClose }: LanguageSettingsProps) => {
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {LANGUAGES
-                .filter(lang => 
-                  !learningLanguages.includes(lang.code) && 
+                .filter(lang =>
+                  !learningLanguages.includes(lang.code) &&
                   !spokenLanguages.includes(lang.code)
                 )
                 .map(language => (
@@ -339,15 +284,15 @@ const LanguageSettings = ({ onClose }: LanguageSettingsProps) => {
             <div className="text-sm text-muted-foreground">
               {hasChanges && "You have unsaved changes"}
             </div>
-            
+
             <div className="flex gap-2">
               {onClose && (
                 <Button variant="outline" onClick={onClose}>
                   Cancel
                 </Button>
               )}
-              
-              <Button 
+
+              <Button
                 onClick={handleSave}
                 disabled={isLoading || !hasChanges}
                 className="flex items-center gap-2"
