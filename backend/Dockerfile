@@ -19,5 +19,5 @@ RUN npm run build
 EXPOSE 2000
 
 # Start the application
-ENV CORS_ORIGIN=https://northling.onrender.com
+ENV CORS_ORIGIN=https://northling.vercel.app
 CMD ["npm", "start"]

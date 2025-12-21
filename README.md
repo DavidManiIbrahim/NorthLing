@@ -83,7 +83,7 @@ copy .env.example .env
 npm run dev
 ```
 
-The frontend will run on `http://https://northling.onrender.com/`
+The frontend will run on `http://https://northling.vercel.app//`
 
 ## Environment Variables
 
@@ -93,7 +93,7 @@ PORT=2000
 MONGODB_URI=mongodb://localhost:27017/northling
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 NODE_ENV=development
-CORS_ORIGIN=http://https://northling.onrender.com/
+CORS_ORIGIN=http://https://northling.vercel.app//
 ```
 
 ### Frontend (.env)
