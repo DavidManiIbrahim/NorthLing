@@ -41,9 +41,9 @@ const ProfileDropdown = ({ onProfileClick }: ProfileDropdownProps) => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={user.profile.avatar_url || ''} alt={user.profile.full_name || ''} />
+            <AvatarImage src={user.profile?.avatar_url || user.profileImage || ''} alt={user.profile?.full_name || user.username || ''} />
             <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-              {user.profile.full_name ? getInitials(user.profile.full_name) : user.email.charAt(0).toUpperCase()}
+              {user.profile?.full_name ? getInitials(user.profile.full_name) : (user.username || user.email || 'U').charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -52,7 +52,7 @@ const ProfileDropdown = ({ onProfileClick }: ProfileDropdownProps) => {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {user.profile.full_name || 'User'}
+              {user.username || user.email.split('@')[0] || 'User'}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
