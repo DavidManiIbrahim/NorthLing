@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import BaseLanguageModal from './BaseLanguageModal';
 import TargetLanguageModal from './TargetLanguageModal';
-import { supabase } from '@/integrations/supabase/client';
+import { apiClient } from '@/lib/api-client';
 
 interface NewUserLanguageFlowProps {
   onComplete: (languages: { base: string; target: string }) => void;

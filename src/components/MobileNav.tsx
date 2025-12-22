@@ -35,22 +35,22 @@ const MobileNav = () => {
             <div className="flex items-center justify-between py-4">
               <h2 className="text-lg font-semibold">Menu</h2>
             </div>
-            
+
             <div className="flex-1 space-y-4">
               {isAuthenticated && user ? (
                 <>
                   <div className="py-4 border-b">
                     <div className="flex items-center space-x-3">
                       <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">
-                        {user.profile.full_name?.charAt(0) || user.email.charAt(0).toUpperCase()}
+                        {(user.username || user.email || 'U').charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-medium">{user.profile.full_name || 'User'}</p>
+                        <p className="font-medium">{user.username || user.email.split('@')[0] || 'User'}</p>
                         <p className="text-sm text-gray-500 capitalize">{user.role}</p>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Button
                       variant="ghost"
@@ -60,7 +60,7 @@ const MobileNav = () => {
                       <User className="h-4 w-4 mr-2" />
                       Profile
                     </Button>
-                    
+
                     {user.role === 'admin' && (
                       <Button
                         variant="ghost"
@@ -74,7 +74,7 @@ const MobileNav = () => {
                         Admin Panel
                       </Button>
                     )}
-                    
+
                     <Button
                       variant="ghost"
                       className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"

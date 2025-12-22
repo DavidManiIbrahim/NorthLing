@@ -16,7 +16,7 @@ interface ProgressDashboardProps {
 
 const ProgressDashboard = ({ progress, languages, onSectionChange }: ProgressDashboardProps) => {
   const { user } = useAuth();
-  
+
   const getLevelProgress = () => {
     const pointsInCurrentLevel = progress.points % 100;
     return (pointsInCurrentLevel / 100) * 100;
@@ -25,8 +25,8 @@ const ProgressDashboard = ({ progress, languages, onSectionChange }: ProgressDas
   const getPersonalizedGreeting = () => {
     const hour = new Date().getHours();
     const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
-    const userName = user?.profile?.full_name?.split(' ')[0] || 'Learner';
-    
+    const userName = user?.username?.split(' ')[0] || 'Learner';
+
     return `Good ${timeOfDay}, ${userName}! 👋`;
   };
 
@@ -42,29 +42,29 @@ const ProgressDashboard = ({ progress, languages, onSectionChange }: ProgressDas
 
   const getSuggestedLessons = () => {
     const lessons = [
-      { 
-        title: "Basic Greetings", 
+      {
+        title: "Basic Greetings",
         description: "Learn essential greetings and introductions",
         difficulty: "Beginner",
         xp: 50,
         action: () => onSectionChange('lessons')
       },
-      { 
-        title: "Daily Vocabulary", 
+      {
+        title: "Daily Vocabulary",
         description: "Practice common words for everyday situations",
         difficulty: "Beginner",
         xp: 30,
         action: () => onSectionChange('vocabulary')
       },
-      { 
-        title: "Grammar Quiz", 
+      {
+        title: "Grammar Quiz",
         description: "Test your understanding of basic grammar rules",
         difficulty: "Intermediate",
         xp: 75,
         action: () => onSectionChange('quiz')
       }
     ];
-    
+
     // Filter based on user's progress
     if (progress.wordsLearned < 10) {
       return lessons.slice(0, 2); // Show only basic lessons for beginners
@@ -91,18 +91,18 @@ const ProgressDashboard = ({ progress, languages, onSectionChange }: ProgressDas
         <p className="text-gray-600 text-lg">
           {getMotivationalMessage()}
         </p>
-        
+
         {/* Daily Streak Highlight */}
         {progress.streak > 0 && (
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 px-4 py-2 rounded-full border border-orange-200">
             <Flame className="h-5 w-5 text-red-500" />
             <span className="font-semibold text-red-700">
-              {progress.streak} day streak! 
+              {progress.streak} day streak!
             </span>
             <span className="text-sm text-red-600">Keep it going!</span>
           </div>
         )}
-        
+
         <p className="text-sm text-gray-500">
           Learning {languages.target} from {languages.base}
         </p>
@@ -171,7 +171,7 @@ const ProgressDashboard = ({ progress, languages, onSectionChange }: ProgressDas
               <span>{progress.points % 100}/100 XP</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
-              <div 
+              <div
                 className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${getLevelProgress()}%` }}
               ></div>
@@ -224,7 +224,7 @@ const ProgressDashboard = ({ progress, languages, onSectionChange }: ProgressDas
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-4 gap-4">
-            <Button 
+            <Button
               onClick={() => onSectionChange('lessons')}
               className="h-20 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
             >
@@ -234,8 +234,8 @@ const ProgressDashboard = ({ progress, languages, onSectionChange }: ProgressDas
                 <div className="text-xs opacity-90">Interactive learning</div>
               </div>
             </Button>
-            
-            <Button 
+
+            <Button
               onClick={() => onSectionChange('vocabulary')}
               className="h-20 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
             >
@@ -245,8 +245,8 @@ const ProgressDashboard = ({ progress, languages, onSectionChange }: ProgressDas
                 <div className="text-xs opacity-90">Vocabulary cards</div>
               </div>
             </Button>
-            
-            <Button 
+
+            <Button
               onClick={() => onSectionChange('quiz')}
               className="h-20 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
             >
@@ -256,8 +256,8 @@ const ProgressDashboard = ({ progress, languages, onSectionChange }: ProgressDas
                 <div className="text-xs opacity-90">Test knowledge</div>
               </div>
             </Button>
-            
-            <Button 
+
+            <Button
               onClick={() => onSectionChange('achievements')}
               className="h-20 bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800"
             >
@@ -279,13 +279,12 @@ const ProgressDashboard = ({ progress, languages, onSectionChange }: ProgressDas
         <CardContent>
           <div className="grid md:grid-cols-2 gap-4">
             {achievements.map((achievement, index) => (
-              <div 
+              <div
                 key={index}
-                className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ${
-                  achievement.unlocked 
-                    ? 'bg-green-50 border border-green-200' 
+                className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ${achievement.unlocked
+                    ? 'bg-green-50 border border-green-200'
                     : 'bg-gray-50 border border-gray-200 opacity-60'
-                }`}
+                  }`}
               >
                 <div className="text-2xl">{achievement.icon}</div>
                 <div className="flex-1">

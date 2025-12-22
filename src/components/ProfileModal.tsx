@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, User, Mail, Save } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { apiClient } from '@/lib/api-client';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -18,13 +19,13 @@ const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [formData, setFormData] = useState({
-    full_name: user?.profile.full_name || '',
-    username: user?.profile.username || '',
+    full_name: user?.username || '', // Fallback since we don't store full_name on main user object currently
+    username: user?.username || '',
   });
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string>(user?.profile.avatar_url || '');
+  const [avatarPreview, setAvatarPreview] = useState<string>(user?.profileImage || '');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
@@ -49,16 +50,16 @@ const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
 
   const handleSave = async () => {
     if (!user) return;
-    
+
     setIsLoading(true);
     try {
-      let avatarUrl = user.profile.avatar_url;
+      let avatarUrl = user.profileImage;
 
       // Upload avatar if changed
       if (avatarFile) {
         const fileExt = avatarFile.name.split('.').pop();
         const fileName = `${user.id}.${fileExt}`;
-        
+
         const { error: uploadError } = await supabase.storage
           .from('avatars')
           .upload(fileName, avatarFile, { upsert: true });
@@ -70,21 +71,12 @@ const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
         const { data: { publicUrl } } = supabase.storage
           .from('avatars')
           .getPublicUrl(fileName);
-        
+
         avatarUrl = publicUrl;
       }
 
-      // Update profile
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: formData.full_name,
-          username: formData.username,
-          avatar_url: avatarUrl,
-        })
-        .eq('id', user.id);
-
-      if (error) throw error;
+      // Update profile via apiClient
+      await apiClient.updateProfile(formData.username, avatarUrl);
 
       await refreshUser();
       toast({
@@ -129,7 +121,7 @@ const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
               <Avatar className="h-24 w-24">
                 <AvatarImage src={avatarPreview} />
                 <AvatarFallback className="text-lg">
-                  {user?.profile.full_name ? getInitials(user.profile.full_name) : <User className="h-8 w-8" />}
+                  {user?.username ? getInitials(user.username) : <User className="h-8 w-8" />}
                 </AvatarFallback>
               </Avatar>
               <Button
